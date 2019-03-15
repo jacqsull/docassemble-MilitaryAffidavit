@@ -35,18 +35,18 @@ code: |
     plaintiff = opposing_party
   client_current_mil_svc
   if op_current_mil_svc == None:
-    understand_bond  
+    understand_bond
   if client_current_mil_svc:
-	  mil_aff_facts = "value('client.name.full') is currently in military service."
+	  mil_aff_facts = client.name.full() + ' is currently in military service.'
   else:
-	  mil_aff_facts = "value('client.name.full') is not currently in military service."
+	  mil_aff_facts = client.name.full() + ' is not currently in military service.'
   if op_current_mil_svc:
-    mil_aff_facts += " value('opposing_party.name.full') is currently in military service."
+    mil_aff_facts += opposing_party.name.full() + ' is currently in military service.'
   elif op_current_mil_svc == False:
-	  mil_aff_facts += " value('opposing_party.name.full') is not currently in military service."
+	  mil_aff_facts += opposing_party.name.full() + ' is not currently in military service.'
   else:
 	  mil_aff_facts += " I do not know if value('opposing_party.name.full') is currently in military service."
-  results_screen
+  mil_aff
   some_event
 ---
 field: testing_court
