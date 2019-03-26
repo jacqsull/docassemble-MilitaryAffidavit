@@ -4,7 +4,7 @@ metadata:
   comment: One of several documents necessary when filing a Complaint for Divorce.
 ---
 modules:
-  - docassemble.MACourts.macourts
+#  - docassemble.MACourts.macourts
   - docassemble.base.util
 # - docassemble.gbls
 #---
@@ -12,7 +12,7 @@ modules:
 #  - docassemble.gbls:basic-questions-gbls.yml
 ---
 objects:
-  - macourts: MACourtList.using(courts=['probate_and_family_courts'])
+  # - macourts: MACourtList.using(courts=['probate_and_family_courts'])
   - client: Individual
   - plaintiff: Individual
   - defendant: Individual
@@ -21,10 +21,8 @@ objects:
 mandatory: True
 code: |
   client.name.first
-  selected_court
-  testing_court
-  client.name.first
-  opposing_party.name.first
+  # selected_court
+  #  testing_court
   client.name.first
   opposing_party.name.first
   if client_role == 'Plaintiff':
@@ -33,21 +31,35 @@ code: |
   else:
     defendant = client
     plaintiff = opposing_party
-  client_current_mil_svc
-  if op_current_mil_svc == None:
-    understand_bond
   if client_current_mil_svc:
+    current_mil_srv_in = True
+    current_mil_srv_in_list = client.name.full()
+    current_mil_srv_not_list = ''
 	  mil_aff_facts = client.name.full() + ' is currently in military service.'
   else:
+    current_mil_srv_in = False
+    current_mil_srv_unknown_list = ''
+    current_mil_srv_not = True
+    current_mil_srv_not_list = client.name.full()
+    current_mil_srv_in_list = ''
 	  mil_aff_facts = client.name.full() + ' is not currently in military service.'
   if op_current_mil_svc:
+    current_mil_srv_unknown = False
+    current_mil_srv_unknown_list = ''
+    current_mil_srv_in = True
+    current_mil_srv_in_list += opposing_party.name.full()
     mil_aff_facts += opposing_party.name.full() + ' is currently in military service.'
   elif op_current_mil_svc == False:
+    current_mil_srv_unknown = False
+    current_mil_srv_not = True
+    current_mil_srv_not_list += opposing_party.name.full()
 	  mil_aff_facts += opposing_party.name.full() + ' is not currently in military service.'
   else:
-	  mil_aff_facts += " I do not know if value('opposing_party.name.full') is currently in military service."
+    current_mil_srv_unknown = True
+    current_mil_srv_unknown_list = opposing_party.name.full()
+	  mil_aff_facts += " I do not know if + opposing_party.name.full() + ' is currently in military service."
+    understand_bond 
   mil_aff
-  some_event
 ---
 field: testing_court
 question: |
@@ -69,10 +81,6 @@ fields:
 ---
 question: |
   ${selected_court} ${selected_court.address.on_one_line()}
----
-mandatory: True
-question: |
-  I am going to ask you a few questions.
 ---
 question: |
   What is your name? 
@@ -113,47 +121,23 @@ fields:
 	  default: ${mil_aff_facts}
 	  datatype: area
 ---
-question: Result of question
-subquestion: |
-  You told me that: 
-  client_current_mil_svc is: "${ client_current_mil_svc }"
-  op_current_mil_svc is: "${ op_current_mil_svc }"  
-mandatory: True
-field: results_screen
----
 mandatory: True
 question: Here is your document.
-event: some_event
 attachment:
   - name: military affidavit
     filename: military_affidavit
-    pdf template file: military_affidavit.pdf
+    pdf template file: military_affidavit2.pdf
     fields:
       - "COURT DEPARTMENT Superior": something
       - "DIVISION OR COUNTY": something
-      - "COURT USE ONLY": something
-      - "Plaintiff": ${plaintiff}
-      - "Defendant": ${defendant}
+      - "plaintiff": ${plaintiff}
+      - "defendant": ${defendant}
       - "DOCKET NUMBER": something
-      - "Client": ${client}
-      - "The following partyies isare currently in military service as defined in the Servicemembers Civil Relief Act 1": something
-      - "The following partyies isare currently in military service as defined in the Servicemembers Civil Relief Act 2": something
-      - "The following partyies isare currently in military service as defined in the Servicemembers Civil Relief Act 3": something
-      - "The following partyies isare currently in military service as defined in the Servicemembers Civil Relief Act 4": something
-      - "The following partyies isare NOT currently in military service as defined in the Servicemembers Civil Relief Act 1": something
-      - "The following partyies isare NOT currently in military service as defined in the Servicemembers Civil Relief Act 2": something
-      - "The following partyies isare NOT currently in military service as defined in the Servicemembers Civil Relief Act 3": something
-      - "The following partyies isare NOT currently in military service as defined in the Servicemembers Civil Relief Act 4": something
-      - "may require that I file a bond 1": something
-      - "may require that I file a bond 2": something
-      - "may require that I file a bond 3": something
-      - "may require that I file a bond 4": something
-      - "The following facts support this affidavit required 1": something
-      - "The following facts support this affidavit required 2": something
-      - "The following facts support this affidavit required 3": something
-      - "The following facts support this affidavit required 4": something
-      - "The following facts support this affidavit required 5": something
-      - "The following facts support this affidavit required 6": something
-      - "The following facts support this affidavit required 7": something
-      - "SIGNATURE X": something
+      - "client": ${client}
+      - "current_mil_srv_in" : ${current_mil_srv_in}
+      - "current_mil_srv_in_list" : ${current_mil_srv_in_list}
+      - "current_mil_srv_not" : ${current_mil_srv_not}
+      - "current_mil_srv_not_list" : ${current_mil_srv_not_list}
+      - "current_mil_srv_unknown" : ${current_mil_srv_unknown}
+      - "current_mil_srv_unknown_list" : ${current_mil_srv_unknown_list}
       - "DATED": something
